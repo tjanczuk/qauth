@@ -15,3 +15,4 @@ _ReSharper.*
 .DS_Store
 *.pidb
 *.userprefs
+Debug
