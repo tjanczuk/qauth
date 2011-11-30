@@ -1,23 +1,99 @@
-// this is a client side JS library that helps fill out web forms using QR codes
+ (function () {
 
-function () {
-	
-	var self = null;
-	
-	for (var n in document.scripts) {
-		if (document.scripts[n].src.toLowerCase().indexOf("phone2web.js") !== -1) {
-			self = document.scripts[n];
-			break; 
-		}
-	}
+    if (!$)
+        throw "phone2web requires jQuery library to be included in the page";
 
-	if (!self)
-		throw "A script tag that includes the phone2web.js script has not been found on the page."
+    var relayurl = "http://localhost";
+    var parameterEncoding = {
+        name: 1,
+        address: 2,
+        city: 4,
+        zip: 8,
+        state: 16,
+        phone: 32,
+        email: 64,
+        visa: 128          
+    };
+    
+    // this is a client side JS library that helps fill out web forms using QR codes   
+    
+    function default_onresponse (options, response) {
+        alert("got response from relay!");
+    }
 
-	var options = JSON.parse(self.text);
+    function generate_qr_data(options) {
+        var data = relayurl + "?h=" + window.location.hostname;
+        var parameters = 0;
+        for (var n in options.require) {
+            parameters |= parameterEncoding[n];
+        }
 
-	// apply defaults
+        data += "&p=" + parameters;
 
-	options.qrid = options.qrid || "qr";
-	if (!options.)
-}();
+        // TODO, requestid should be assigned by the relay
+        options.requestid = Math.floor(Math.random() * 1000000000); 
+        data += "&id=" + options.requestid;
+
+        return data;
+    }
+
+    function generate_qr_image_url(qrdata) {
+        var url = "https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=" + escape(qrdata);
+
+        return url;    
+    }
+
+    // find the <script> tag that references this script
+    
+    var self = null;
+    
+    for (var n in document.scripts) {
+        if (document.scripts[n].src.toLowerCase().indexOf("phone2web.js") !== -1) {
+            self = document.scripts[n];
+            break; 
+        }
+    }
+
+    if (!self)
+        throw "A script tag that includes the phone2web.js script has not been found on the page."
+
+    // parse the options of the script contained in the body of the <script> element
+
+    var options = JSON.parse(self.text);
+
+    if (typeof options !== "object")
+        throw "The content of the script tag referencing the phone2web.js script must be a JSON object";
+
+    // normalize options
+
+    if (!options.require) {
+        var newOptions = {
+            require: {}
+        };
+        
+        for (var n in options) {
+            newOptions.require[options[n]] = "#" + options[n];
+        }
+
+        options = newOptions;
+    }
+
+    options.qr = options.qr || "#qr";
+    options.onresponse = options.onresponse || function (response) {
+        default_onresponse(options, response);
+    }
+
+    // generate the QR code data
+
+    var qrdata = generate_qr_data(options);
+
+    // generate the QR code image URL
+
+    var qrimage = generate_qr_image_url(qrdata);
+
+    // insert the QR image into the specified location on the page
+
+    $(function() {
+        $(options.qr).html('<img src="' + qrimage + '" width=150 height=150 />');
+    });
+})();
