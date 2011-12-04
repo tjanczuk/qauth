@@ -3,7 +3,7 @@
     if (!$)
         throw "phone2web requires jQuery library to be included in the page";
 
-    var relayurl = "http://localhost";
+    var relayurl = "http://localhost:31416/";
     var parameterEncoding = {
         name: 1,
         address: 2,
@@ -41,6 +41,38 @@
         var url = "https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=" + escape(qrdata);
 
         return url;    
+    }
+
+    function stopPolling(options) {
+        $(options.qr).html('QR inactive');
+    }
+
+    function processResponse(options, data) {
+        for (var n in options.require) {
+            if (data[n]) {
+                $(options.require[n]).val(data[n]);
+            }
+        }
+    }
+
+    function startPolling(options) {
+       $.ajax({
+            url: relayurl + options.requestid,
+            success: function(data, statusText, xhr) {
+                processResponse(options, data);    
+                stopPolling(options);
+            },
+            error: function(xhr, statusText, err) {
+                if (xhr.status === 404) {
+                    // data for that request is not available at the relay, resume polling
+                    startPolling(options);
+                }
+                else {
+                    // other error, stop polling and provide a hint to the browser user that QR support is off
+                    stopPolling(options);
+                }
+            }
+       });        
     }
 
     // find the <script> tag that references this script
@@ -96,4 +128,9 @@
     $(function() {
         $(options.qr).html('<img src="' + qrimage + '" width=150 height=150 />');
     });
+
+    // start polling for the result
+
+    startPolling(options);
+
 })();
