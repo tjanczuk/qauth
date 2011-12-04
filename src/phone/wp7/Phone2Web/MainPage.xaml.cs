@@ -21,6 +21,7 @@ namespace Phone2Web
         private PhotoCameraLuminanceSource _luminance;
         private QRCodeReader _reader;
         private PhotoCamera _photoCamera;
+        bool processing = false;
         
         public MainPage()
         {            
@@ -82,8 +83,9 @@ namespace Phone2Web
 
         private void DisplayResult(string text)
         {
-            if (!_matches.Contains(text) && !_matches.Contains("Error parsing: " + text))
+            if (!processing && !_matches.Contains(text) && !_matches.Contains("Error parsing: " + text))
             {
+                processing = true;
                 try
                 {
                     this.SendDataToRelay(text);
@@ -92,6 +94,7 @@ namespace Phone2Web
                 catch
                 {
                     _matches.Add("Error parsing: " + text);
+                    processing = false;
                 }
             }
         }
@@ -112,6 +115,7 @@ namespace Phone2Web
 
         void client_UploadStringCompleted(object sender, UploadStringCompletedEventArgs e)
         {
+            processing = false;
             if (null != e.Error)
             {
                 _matches.Add("Error sending data to relay.");
