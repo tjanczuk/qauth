@@ -7,11 +7,14 @@ using Microsoft.Devices;
 using com.google.zxing;
 using com.google.zxing.common;
 using com.google.zxing.qrcode;
+using System.Net;
 
 namespace Phone2Web
 {
     public partial class MainPage
     {
+        const string relayurl = "http://192.168.1.70:31416/";
+
         private readonly DispatcherTimer _timer;
         private readonly ObservableCollection<string> _matches;
 
@@ -63,8 +66,14 @@ namespace Phone2Web
                 _photoCamera.GetPreviewBufferY(_luminance.PreviewBufferY);
                 var binarizer = new HybridBinarizer(_luminance);
                 var binBitmap = new BinaryBitmap(binarizer);
+#if DEBUG
+                var text = "http://localhost?h=foobarstore.com&p=255&id=1234";
+#else
                 var result = _reader.decode(binBitmap);
-                Dispatcher.BeginInvoke(() => DisplayResult(result.Text));
+                var text = result.Text;                
+#endif
+                Dispatcher.BeginInvoke(() => DisplayResult(text));
+
             }
             catch (Exception e)
             {
@@ -73,8 +82,68 @@ namespace Phone2Web
 
         private void DisplayResult(string text)
         {
-            if(!_matches.Contains(text))
-                _matches.Add(text);            
+            if (!_matches.Contains(text) && !_matches.Contains("Error parsing: " + text))
+            {
+                try
+                {
+                    this.SendDataToRelay(text);
+                    _matches.Add(text);
+                }
+                catch
+                {
+                    _matches.Add("Error parsing: " + text);
+                }
+            }
+        }
+
+        void SendDataToRelay(string text)
+        {
+            string requestid;
+            ulong parameters;
+
+            this.ExtractData(text, out requestid, out parameters);
+
+            Collection<string> identifiers = PersonalDataStore.GetIdentifiers(parameters);
+            string json = PersonalDataStore.GetData(identifiers);
+            WebClient client = new WebClient();
+            client.UploadStringCompleted += new UploadStringCompletedEventHandler(client_UploadStringCompleted);
+            client.UploadStringAsync(new Uri(relayurl + requestid), json);
+        }
+
+        void client_UploadStringCompleted(object sender, UploadStringCompletedEventArgs e)
+        {
+            if (null != e.Error)
+            {
+                _matches.Add("Error sending data to relay.");
+            }
+            else
+            {
+                _matches.Add("Data sent to relay.");
+            }
+        }
+
+        void ExtractData(string text, out string requestid, out ulong parameters)
+        {
+            requestid = null;
+            parameters = 0;
+            Uri uri = new Uri(text, UriKind.Absolute);
+            string[] components = uri.Query.Split('&');
+            foreach (string component in components)
+            {
+                if (component.StartsWith("p="))
+                {
+                    parameters = ulong.Parse(component.Substring(2));
+                }
+                else if (component.StartsWith("id="))
+                {
+                    requestid = component.Substring(3);
+                }
+            }
+
+            if (parameters == 0 || requestid == null)
+            {
+                throw new InvalidOperationException("Unable to extract data from the URI.");
+            }
         }
     }
 }

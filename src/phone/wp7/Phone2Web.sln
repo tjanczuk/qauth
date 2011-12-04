@@ -3,6 +3,26 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Phone2Web", "Phone2Web\Phone2Web.csproj", "{832DD9ED-1142-468F-A1E0-1E64A28F5E7A}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Relay", "Relay", "{C4E94321-811B-4BF6-923B-2EC924F99590}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Client", "Client", "{C9CF1A6F-81A0-4FB7-BC1B-4196A4BFEFE0}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\relay\client\phone2web.js = ..\..\relay\client\phone2web.js
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Server", "Server", "{043B58E1-20BB-4440-8CB4-BC97BE762EBE}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\relay\server\data.json = ..\..\relay\server\data.json
+		..\..\relay\server\server.js = ..\..\relay\server\server.js
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sample", "Sample", "{1C283508-8039-48AF-AFD4-CF54E0E4DC67}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Checkout", "Checkout", "{148C6212-2331-49C5-B5DA-0880ABCA70AE}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\sample\checkout\index.html = ..\..\sample\checkout\index.html
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +38,10 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{C9CF1A6F-81A0-4FB7-BC1B-4196A4BFEFE0} = {C4E94321-811B-4BF6-923B-2EC924F99590}
+		{043B58E1-20BB-4440-8CB4-BC97BE762EBE} = {C4E94321-811B-4BF6-923B-2EC924F99590}
+		{148C6212-2331-49C5-B5DA-0880ABCA70AE} = {1C283508-8039-48AF-AFD4-CF54E0E4DC67}
 	EndGlobalSection
 EndGlobal
