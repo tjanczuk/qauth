@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScannerDemo", "ScannerDemo\ScannerDemo.csproj", "{832DD9ED-1142-468F-A1E0-1E64A28F5E7A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Phone2Web", "Phone2Web\Phone2Web.csproj", "{832DD9ED-1142-468F-A1E0-1E64A28F5E7A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

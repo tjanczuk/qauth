@@ -8,7 +8,7 @@ using com.google.zxing;
 using com.google.zxing.common;
 using com.google.zxing.qrcode;
 
-namespace ScannerDemo
+namespace Phone2Web
 {
     public partial class MainPage
     {

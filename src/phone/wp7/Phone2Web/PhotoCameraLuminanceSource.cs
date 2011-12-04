@@ -1,7 +1,7 @@
 ﻿using System;
 using com.google.zxing;
 
-namespace ScannerDemo
+namespace Phone2Web
 {
     public class PhotoCameraLuminanceSource : LuminanceSource
     {
