@@ -13,7 +13,7 @@ namespace Phone2Web
 {
     public partial class MainPage
     {
-        const string relayurl = "http://192.168.1.70:31416/";
+        const string relayurl = "http://relay.tangyorange.com:31416/";
 
         private readonly DispatcherTimer _timer;
         private readonly ObservableCollection<string> _matches;

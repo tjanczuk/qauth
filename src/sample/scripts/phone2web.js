@@ -3,7 +3,7 @@
     if (!$)
         throw "phone2web requires jQuery library to be included in the page";
 
-    var relayurl = "http://192.168.1.70:31416/";
+    var relayurl = "http://relay.janczuk.org:31416/";
     var parameterEncoding = {
         name: 1,
         address: 2,
