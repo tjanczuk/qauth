@@ -7,7 +7,10 @@ var routes = {
 		body: fs.readFileSync(path.resolve(__dirname, 'checkout.html')),
 		contentType: 'text/html'
 	},
-	'/scripts/phone2web.js': {
+	'/checkout_simulator.html': {
+		body: fs.readFileSync(path.resolve(__dirname, 'checkout_simulator.html')),
+		contentType: 'text/html'
+	},	'/scripts/phone2web.js': {
 		body: fs.readFileSync(path.resolve(__dirname, 'scripts/phone2web.js')),
 		contentType: 'application/javascript'
 	}

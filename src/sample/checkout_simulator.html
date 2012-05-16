@@ -1,6 +1,9 @@
 <!-- an order checkout page that uses the phone2web library to facilitate the 
 checkout process -->
 
+<!-- this version of the page includes a button that simulates the processing
+that happens on the phone when the QR code is scanned -->
+
 <html>
 <head>
   <title>QR Checkout</title>
@@ -9,31 +12,27 @@ checkout process -->
   <script src="scripts/phone2web.js" type="text/javascript">
     [ "name", "address", "city", "state", "email", "visa", "phone", "zip" ]
   </script>
-<!--
-//  {   
-//    "name": "name-form-id",
-//    "address": "address-form-id"
-//  }   
+  <script type="text/javascript">
 
-//  {
-//    "qr": "qr-form-id",
-//    "require": [ "name", "address" ]
-//  }
+  		// this logic normally runs on the phone after the QR code is scanned
+  		function simulateQrCodeScanned() {
+  			// extract the mailbox Id embedded in the QR code
 
-//  {
-//    "qr": "qr-form-id"
-//    "require": {
-//      "name": "name-form-id",
-//      "address": "address-form-id"
-//    }
-//  }
+  			var qrImageUrl = $('img')[0].src;
+  			var mailboxId = qrImageUrl.substring(qrImageUrl.indexOf('id%3D') + 5);
+  			
+  			// post requested data to the relay at that mailbox Id
 
-//  {
-//    "qr": "qr-form-id",
-//    "require": [ "name", "address" ]
-//    "onresponse": "onresponse_callback" // function (options, response)
-//  }
--->
+	       $.ajax({
+	            url: 'http://relay.janczuk.org:31416/' + mailboxId,
+	            type: 'POST',
+	            processData: false,
+	            data: JSON.stringify({"name":"Tomasz Janczuk","address":"1 Redmond Way","city":"Redmond",
+	            	"state":"WA","phone":"425-123-1234","email":"foo@bar.com","visa":"1234123412341234","zip":"98052"})
+	       });  
+  		}
+
+  </script>
 </head>
 <body>
 	<h1>Order confirmation</h1>
@@ -48,5 +47,6 @@ checkout process -->
 		<tr><td>Visa:</td><td><input type="text" id="visa"></input></td></tr>
 	</table>
 	<div id="qr"></div>
+	<button onclick="simulateQrCodeScanned();">Simulate scanning of the QR code using a phone</button>
 </body>
 </html>
